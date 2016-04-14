@@ -12,11 +12,14 @@ namespace PracticeLib
     public class RedisTester
     {
 
+        static RedisClient CreateClient()
+        {
+            return new RedisClient("127.0.0.1", 6379);
+        }
         public long Publish(string message)
         {
-            RedisClient client = new RedisClient("192.168.22.236", 6379);
-            client.AddItemToList("mq:list", message);
-
+            RedisClient client = CreateClient();
+            Debug.WriteLine(">>:" + message);
             var result = client.PublishMessage("mq:test", message);
             client.Quit();
 
@@ -25,48 +28,19 @@ namespace PracticeLib
 
         public long Subscribe()
         {
-            RedisClient client = new RedisClient("192.168.22.236", 6379);
-            RedisClient client2 = new RedisClient("192.168.22.236", 6379);
-            client.AddItemToList("mq:list", "subscribe");
-
+            RedisClient client = CreateClient();
             RedisSubscription sub = new RedisSubscription(client);
 
             sub.OnMessage += (channel, msg) =>
             {
-                Debug.WriteLine(channel + ":" + msg);
+                Debug.WriteLine("<<:" + msg);
             };
 
             Task.Factory.StartNew(() =>
             {
                 sub.SubscribeToChannels("mq:test");
-
-
-
             });
 
-            Task.Factory.StartNew(() =>
-            {
-                while (true)
-                {
-                    try
-                    {
-                        var item = client2.DequeueItemFromList("mq:list");
-                        if (item == null)
-                        {
-                            Thread.Sleep(2000);
-                        }
-                        else {
-                            Debug.WriteLine("list:" + item);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex.Message);
-                        Debug.WriteLine(ex.StackTrace);
-                    }
-
-                }
-            });
             return 0;
         }
     }
