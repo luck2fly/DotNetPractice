@@ -31,7 +31,7 @@ namespace PracticeLib
         {
             RedisClient client = CreateClient();
 
-
+            //很low的轮询式
             Task.Factory.StartNew(() =>
             {
                 while (true)

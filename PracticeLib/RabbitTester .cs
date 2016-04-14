@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 
 namespace PracticeLib
 {
@@ -42,6 +43,24 @@ namespace PracticeLib
             var conn = CreateConnection();
             var channel = conn.CreateModel();
 
+            //订阅试
+            var consumer = new EventingBasicConsumer(channel);
+            consumer.Received += (s,e)=> {
+                Debug.WriteLine("<<:" + Utils.ParseBytes(e.Body));
+            };
+
+            var value = channel.BasicConsume("test", true, consumer);
+          
+            return 0;
+        }
+
+
+        public long Subscribe2()
+        {
+            var conn = CreateConnection();
+            var channel = conn.CreateModel();
+
+            //轮询式
             var consumer = new QueueingBasicConsumer(channel);
             var value = channel.BasicConsume("test", true, consumer);
 
@@ -71,6 +90,7 @@ namespace PracticeLib
             });
             return 0;
         }
+
     }
 
 }
