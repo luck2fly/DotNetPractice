@@ -5,32 +5,34 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using ServiceStack.Redis;
+using StackExchange.Redis;
 
 namespace PracticeLib
 {
-    public class Redis2Tester
+    public class Redis4Tester
     {
 
-        static RedisClient CreateClient()
+
+        static ConnectionMultiplexer CreateClient()
         {
-            return new RedisClient("127.0.0.1", 6379);
+            return ConnectionMultiplexer.Connect("127.0.0.1:6379");
         }
         public long Publish(string message)
         {
             using (var client = CreateClient())
             {
+                var db = client.GetDatabase();
                 Debug.WriteLine(">>:" + message);
-                client.EnqueueItemOnList("mq:list", message);
+
+                db.ListLeftPush("mq:list", message);
 
             }
-
             return 0;
         }
 
         public long Subscribe()
         {
-            RedisClient client = CreateClient();
+            var client = CreateClient();
 
             //很low的轮询式
             Task.Factory.StartNew(() =>
@@ -39,8 +41,8 @@ namespace PracticeLib
                 {
                     try
                     {
-                        var item = client.DequeueItemFromList("mq:list");
-                        if (item == null)
+                        var item = client.GetDatabase().ListRightPop("mq:list");
+                        if (!item.HasValue)
                         {
                             Thread.Sleep(100);
                         }

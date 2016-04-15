@@ -11,8 +11,8 @@ namespace Practice
         static void Main(string[] args)
         {
             //Test1();
-            //Test2();
-            Test3();
+            Test2();
+            Test4();
             Console.ReadKey();
 
         }
@@ -45,7 +45,7 @@ namespace Practice
         }
         static void Test3()
         {
-            var tester = new PracticeLib.RabbitTester();
+            var tester = new PracticeLib.Redis3Tester();
             tester.Subscribe();
 
             for (var i = 0; i < 10; i++)
@@ -55,6 +55,32 @@ namespace Practice
             }
 
             Console.WriteLine("over3");
+        }
+        static void Test4()
+        {
+            var tester = new PracticeLib.Redis4Tester();
+            tester.Subscribe();
+
+            for (var i = 0; i < 10; i++)
+            {
+                var value = tester.Publish("mq4-" + i + "消息：" + DateTime.Now.ToString("o"));
+                Thread.Sleep(200);
+            }
+
+            Console.WriteLine("over4");
+        }
+        static void Test5()
+        {
+            var tester = new PracticeLib.RabbitTester();
+            tester.Subscribe();
+
+            for (var i = 0; i < 10; i++)
+            {
+                var value = tester.Publish("mq5-" + i + "消息：" + DateTime.Now.ToString("o"));
+                Thread.Sleep(200);
+            }
+
+            Console.WriteLine("over5");
         }
 
 

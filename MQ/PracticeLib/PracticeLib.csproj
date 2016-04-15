@@ -57,6 +57,10 @@
       <HintPath>..\Practice\packages\ServiceStack.Text.3.9.71\lib\net35\ServiceStack.Text.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="StackExchange.Redis, Version=1.0.316.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\StackExchange.Redis.1.0.488\lib\net45\StackExchange.Redis.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -67,7 +71,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="RabbitTester .cs" />
+    <Compile Include="Redis4Tester.cs" />
     <Compile Include="Redis2Tester.cs" />
+    <Compile Include="Redis3Tester.cs" />
     <Compile Include="RedisTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils.cs" />
