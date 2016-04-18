@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -12,15 +13,19 @@ namespace PracticeLib
     public class Redis3Tester
     {
 
+        static ConnectionMultiplexer manager = CreateClient();
+
+
         static ConnectionMultiplexer CreateClient()
         {
-            return ConnectionMultiplexer.Connect("127.0.0.1:6379");
+            var m = ConnectionMultiplexer.Connect("127.0.0.1:6379");
+            return m;
         }
+
         public long Publish(string message)
         {
-            var client = CreateClient();
             Debug.WriteLine(">>:" + message);
-            var sub = client.GetSubscriber();
+            var sub = manager.GetSubscriber();
             var result = sub.Publish("mq:test", message);
 
 
@@ -29,13 +34,13 @@ namespace PracticeLib
 
         public long Subscribe()
         {
-            var client = CreateClient();
 
-            var sub = client.GetSubscriber();
+            var sub = manager.GetSubscriber();
 
             sub.SubscribeAsync("mq:test", (channel, msg) =>
             {
                 Debug.WriteLine("<<:" + msg);
+                Console.WriteLine("<<:" + msg);
             });
 
             return 0;
